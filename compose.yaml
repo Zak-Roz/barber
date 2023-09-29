@@ -11,22 +11,24 @@ services:
       - express-mysql
       - express-memcached
     ports:
-      - '6000:6000'
+      - '3005:3005'
   mysql:
     container_name: mysql
+    restart: always
     image: mysql:latest
+    environment:
+      MYSQL_DATABASE: 'barber'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'pass'
+      MYSQL_ROOT_PASSWORD: 'pass'
     ports:
-      - 127.0.0.2:8001:3306
+      - '3306:3306'
+    expose:
+      - '3306'
     volumes:
-      - ./my.cnf:/etc/mysql/my.cnf
-      - ./db:/var/lib/mysql
+      - my-db:/var/lib/mysql
     networks:
       - express-mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=barber
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
   memcached:
     container_name: memcached
     image: memcached:latest
@@ -37,3 +39,5 @@ services:
 networks:
   express-mysql:
   express-memcached:
+volumes:
+  my-db:

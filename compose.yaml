@@ -11,7 +11,7 @@ services:
       - express-mysql
       - express-memcached
     ports:
-      - '3005:3005'
+      - '80:5000'
   mysql:
     container_name: mysql
     restart: always

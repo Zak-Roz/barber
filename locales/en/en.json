@@ -1,0 +1,23 @@
+{
+    "ENTITY_NOT_FOUND": "${entityName} not found",
+    "WRONG_CREDENTIALS": "Wrong credentials",
+    "TOKEN_EXPIRED": "Token expired",
+    "ENTITY_ALREADY_EXIST": "${entityName} already exist",
+    "EMAIL_ALREADY_EXIST": "Email has already been taken.",
+    "FILE_ALREADY_USED": "File already used",
+    "INVALID_OBJECT_ID": "Invalid Object Id",
+    "NO_ACCESS_TO_ENTITY": "You don't have access to this ${entityName}",
+    "FILE_IN_USE": "File already in use",
+    "TOKEN_INVALID": "Token invalid, or already used!",
+    "ATTEMPTS_EXCEEDED": "The restoration ${type} can't be send more than 5 times per 24 hours. Try again later",
+    "TOO_EARLY_TO_RESEND_VERIFICATION_TYPE": "Email verification can be requested once per 60 seconds",
+    "LINK_ALREADY_EXPIRED": "Invite link has already expired.",
+    "USER_NO_ACCESS_IN_COMPANY": "You don't have access in the Company",
+    "ALREADY_VERIFIED": "Your email address has been already verified!",
+    "INVALID_EMAIL": "\"${email}\" contains an invalid email address.",
+    "USER_ALREADY_IN_PROJECT": "The user is already in the project.",
+    "ACCESS_DENIED": "Access is denied",
+    "ACCOUNT_NOT_VERIFIED": "The account has not been verified.",
+    "ATTACHMENT_LIMIT_REACHED": "You have reached the maximum limit of 10 attachments for this entity. Please remove some attachments before adding more.",
+    "TIME_SLOT_BUSY": "This time slot is busy, or the time you want to make an appointment for coincides with another appointment"
+}

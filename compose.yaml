@@ -1,0 +1,39 @@
+services:
+  backend:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql
+      - memcached
+    networks:
+      - express-mysql
+      - express-memcached
+    ports:
+      - '6000:6000'
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    ports:
+      - 127.0.0.2:8001:3306
+    volumes:
+      - ./my.cnf:/etc/mysql/my.cnf
+      - ./db:/var/lib/mysql
+    networks:
+      - express-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=barber
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+  memcached:
+    container_name: memcached
+    image: memcached:latest
+    ports:
+      - "11211:11211"
+    networks:
+      - express-memcached
+networks:
+  express-mysql:
+  express-memcached:

@@ -54,47 +54,32 @@ export class AdminsSessionsController {
   @HttpCode(HttpStatus.CREATED)
   @Post('')
   async create(@Body() body: LoginUserDto): Promise<UserSessionResponseDto> {
-    let session: SessionDto | undefined;
     const scopes: readonly (string | ScopeOptions)[] = [
       { method: ['byRoles', [UserRoles.admin]] },
       'withAvatar',
     ];
 
-    return this.dbConnection.transaction(async (transaction: Transaction) => {
-      const user = await this.usersService.getUserByEmail(
-        body.email,
-        scopes,
-        transaction,
-      );
+    const user = await this.usersService.getUserByEmail(body.email, scopes);
 
-      console.log(
-        !user ||
-          !PasswordHelper.compare(
-            `${body.password}${user.get('salt')}`,
-            user.get('password'),
-          ),
-      );
-
-      if (
-        !user ||
-        !PasswordHelper.compare(
-          `${body.password}${user.get('salt')}`,
-          user.get('password'),
-        )
-      ) {
-        throw new UnprocessableEntityException({
-          message: this.translator.translate('WRONG_CREDENTIALS'),
-          errorCode: 'WRONG_CREDENTIALS',
-          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        });
-      }
-
-      session = await this.sessionsService.create(user.get('id'), {
-        role: user.get('role'),
+    if (
+      !user ||
+      !PasswordHelper.compare(
+        `${body.password}${user.get('salt')}`,
+        user.get('password'),
+      )
+    ) {
+      throw new UnprocessableEntityException({
+        message: this.translator.translate('WRONG_CREDENTIALS'),
+        errorCode: 'WRONG_CREDENTIALS',
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
+    }
 
-      return new UserSessionResponseDto(new UserDto(user), session);
+    const session = await this.sessionsService.create(user.get('id'), {
+      role: user.get('role'),
     });
+
+    return new UserSessionResponseDto(new UserDto(user), session);
   }
 
   @ApiBearerAuth()
@@ -111,8 +96,8 @@ export class AdminsSessionsController {
   }
 
   @Public()
-  @ApiOkResponse({ type: () => SessionDto })
   @ApiOperation({ summary: 'Refresh session' })
+  @ApiOkResponse({ type: () => SessionDto })
   @HttpCode(HttpStatus.OK)
   @Put('')
   async refresh(@Body() body: RefreshSessionDto): Promise<SessionDto> {

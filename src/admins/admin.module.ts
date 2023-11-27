@@ -19,6 +19,9 @@ import { MemcachedService } from 'src/common/utils/database/memcached.service';
 import { CacheModuleInstance } from 'src/common/utils/database/memcache.provider';
 import { UsedUserPasswordsService } from 'src/users/used-user-password.service';
 import { UsersService } from 'src/users/user.service';
+import { RecordsService } from 'src/records/records.service';
+import { WorkingTimesService } from 'src/working-times/working-times.service';
+import { FavorsService } from 'src/favor/favors.service';
 
 @Module({
   imports: [
@@ -31,6 +34,9 @@ import { UsersService } from 'src/users/user.service';
   ],
   providers: [
     UsersService,
+    RecordsService,
+    WorkingTimesService,
+    FavorsService,
     UsedUserPasswordsService,
     FilesService,
     S3Service,

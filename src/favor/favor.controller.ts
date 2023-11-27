@@ -1,4 +1,11 @@
-import { Controller, HttpStatus, HttpCode, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  HttpStatus,
+  HttpCode,
+  Get,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -12,6 +19,8 @@ import { FavorsService } from './favors.service';
 import { PaginationParams } from 'src/common/base/pagination-params.dto';
 import { PaginationHelper } from 'src/common/utils/helpers/pagination.helper';
 import { FavorsDto } from './models/favors.dto';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { DEFAULT_CACHE_TTL } from 'src/common/resources/common/cache';
 
 @ApiTags('favor')
 @Controller('favor')
@@ -23,6 +32,8 @@ export class FavorController {
   @Roles(UserRoles.user)
   @ApiOkResponse({ type: () => FavorsDto })
   @HttpCode(HttpStatus.OK)
+  @CacheTTL(DEFAULT_CACHE_TTL)
+  @UseInterceptors(CacheInterceptor)
   @Get('')
   async getListFavor(@Query() query: PaginationParams): Promise<FavorsDto> {
     let items: Favor[] = [];

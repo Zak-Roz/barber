@@ -8,11 +8,13 @@ import {
   Post,
   Query,
   Request,
+  UseInterceptors,
 } from '@nestjs/common';
 import { TranslatorService } from 'nestjs-translator';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -34,6 +36,11 @@ import { UsersDto } from 'src/users/models/users.dto';
 import { PaginationHelper } from 'src/common/utils/helpers/pagination.helper';
 import { User } from 'src/users/models';
 import { ScopeOptions } from 'sequelize';
+import {
+  DEFAULT_CACHE_TTL,
+  ONE_HOUR_CACHE_TTL,
+} from 'src/common/resources/common/cache';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('records')
 @Controller('records')
@@ -79,6 +86,10 @@ export class RecordController {
   @ApiOperation({ summary: 'Get all barbers' })
   @ApiBearerAuth()
   @Roles(UserRoles.user)
+  @ApiOkResponse({ type: () => UsersDto })
+  @HttpCode(HttpStatus.OK)
+  @CacheTTL(ONE_HOUR_CACHE_TTL)
+  @UseInterceptors(CacheInterceptor)
   @Get('barbers')
   async getBarbers(@Query() query: PaginationParams): Promise<UsersDto> {
     let items: User[] = [];
@@ -101,6 +112,10 @@ export class RecordController {
   @ApiOperation({ summary: 'Get free time slots' })
   @ApiBearerAuth()
   @Roles(UserRoles.user)
+  @ApiOkResponse({ type: () => [String] })
+  @HttpCode(HttpStatus.OK)
+  @CacheTTL(DEFAULT_CACHE_TTL)
+  @UseInterceptors(CacheInterceptor)
   @Get('free-slots')
   async getTimeSlots(@Query() query: GetFreeSlotsDto) {
     const record = await this.recordsService.getAvailableSlots(

@@ -189,8 +189,11 @@ export class VerificationsController {
       );
 
       await Promise.all([
-        user.update({ password: body.password, isVerified: true }),
-        verificationToken.update({ isUsed: true }),
+        user.update(
+          { password: body.password, isVerified: true },
+          { transaction },
+        ),
+        verificationToken.update({ isUsed: true }, { transaction }),
         this.sessionsService.destroySessions(user.get('id')),
       ]);
 

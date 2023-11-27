@@ -2,17 +2,15 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'sequelize-typescript';
 import { BaseService } from 'src/common/base/base.service';
 import { Provides } from 'src/common/resources/common/provides';
-import { TranslatorService } from 'nestjs-translator';
 import { WorkingTime } from './models';
 import { Transaction } from 'sequelize/types';
-import { UpdateWorkingTimesDto } from 'src/admins-barbers/models';
+import { UpdateWorkingTimesDto } from 'src/admins/models';
 
 @Injectable()
 export class WorkingTimesService extends BaseService<WorkingTime> {
   constructor(
     @Inject(Provides.workingTime)
     protected readonly model: Repository<WorkingTime>,
-    private readonly translator: TranslatorService,
   ) {
     super(model);
   }

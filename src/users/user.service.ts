@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from './models';
+import { User, UserDto } from './models';
 import { Transaction } from 'sequelize/types';
 import { Repository } from 'sequelize-typescript';
 import { BaseService } from 'src/common/base/base.service';
@@ -14,6 +14,8 @@ import { UsedUserPasswordsService } from './used-user-password.service';
 import { PasswordHelper } from 'src/common/utils/helpers/password.helper';
 import { ScopeOptions } from 'sequelize';
 import { TranslatorService } from 'nestjs-translator';
+import { UserRoles } from 'src/common/resources/users';
+import { UpdateBarberDto, UpdateUserDto } from 'src/admins/models';
 
 @Injectable()
 export class UsersService extends BaseService<User> {
@@ -84,5 +86,35 @@ export class UsersService extends BaseService<User> {
         statusCode: HttpStatus.BAD_REQUEST,
       });
     }
+  }
+
+  async updateUser(
+    body: UpdateBarberDto | UpdateUserDto,
+    userId: number,
+    role?: UserRoles,
+  ): Promise<User> {
+    const scopes: (string | ScopeOptions)[] = [];
+
+    if (role) {
+      scopes.push({ method: ['byRoles', role] });
+    }
+
+    const user = await this.getById(userId, scopes);
+
+    if (body.email) {
+      const userByEmail = await this.getUserByEmail(body.email);
+
+      if (userByEmail && user.get('email') !== userByEmail.get('email')) {
+        throw new BadRequestException({
+          message: this.translator.translate('EMAIL_ALREADY_EXIST'),
+          errorCode: 'EMAIL_ALREADY_EXIST',
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+      }
+    }
+
+    await user.update(body);
+
+    return user;
   }
 }
